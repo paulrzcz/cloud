@@ -29,14 +29,21 @@ library
                        distributed-process,
                        cmdargs,
                        binary,
-                       mersenne-random-pure64
+                       mersenne-random-pure64,
+                       distributed-process-simplelocalnet,
+                       network
 
 executable app
   hs-source-dirs:      app
   main-is:             Main.hs
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
-                       app
+                       app,
+                       distributed-process,
+                       distributed-process-simplelocalnet,
+                       monad-logger,
+                       text,
+                       transformers
 
 test-suite simple-test
   type:                exitcode-stdio-1.0
