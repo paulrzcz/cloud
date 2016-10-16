@@ -25,7 +25,8 @@ library
                        monad-logger,
                        text,
                        distributed-process,
-                       cmdargs
+                       cmdargs,
+                       binary
 
 executable app
   hs-source-dirs:      app
