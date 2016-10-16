@@ -16,7 +16,8 @@ library
   hs-source-dirs:      src
   default-language:    Haskell2010
   exposed-modules:     CmdArgs,
-                       Message
+                       Message,
+                       Random
   build-depends:       base >= 4.7 && < 5,
                        hspec,
                        QuickCheck,
@@ -27,7 +28,8 @@ library
                        text,
                        distributed-process,
                        cmdargs,
-                       binary
+                       binary,
+                       mersenne-random-pure64
 
 executable app
   hs-source-dirs:      app

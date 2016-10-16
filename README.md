@@ -3,18 +3,17 @@
 This is the test of distributed-process library on "real-life" task
 
 # Development plan
-* Command line arguments
+* Command line arguments √
   * --send-for k
   * --wait-for l
   * --with-seed s
   * some parameters for distributed-process startup `[(host, port)]`
 * Random number generators
   * System
-  * Mersienne-Twister
-  * Sobol
+  * Mersienne-Twister √
 * Messages
-  * Message data type
-  * Calculation of tuple (it seems to be a monoid computation or kind of)
+  * Message data type √
+  * Calculation of tuple (it seems to be a monoid computation or kind of) √
   * Message sending code
 * Communication between nodes
   * distributed-process (study!)
