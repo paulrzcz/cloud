@@ -1,5 +1,10 @@
 module Main where
 
+import           CmdArgs
+
 main :: IO ()
 main = do
-  putStrLn "hello world"
+  args <- getCloudArgs
+  print args
+
+  return ()
