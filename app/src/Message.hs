@@ -3,6 +3,7 @@ module Message
     ( Message(..)
     , ResultState (..)
     , updateResult
+    , initialState
     ) where
 
 import           Control.Distributed.Process.Serializable
@@ -20,7 +21,7 @@ instance Binary Message where
 instance Serializable Message
 
 --
-data ResultState = ResultState Integer Double
+data ResultState = ResultState Integer Double deriving (Show, Eq)
 
 initialState = ResultState 0 0.0
 
