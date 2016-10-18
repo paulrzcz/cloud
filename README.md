@@ -2,6 +2,12 @@
 
 This is the test of distributed-process library on "real-life" task
 
+# Catches and non-clarities
+* Each message contains a deterministic random number n ∈ (0, 1].
+  * There is no distribution of random number. In order to optimize the goal (higher value is better), the distribution could be \delta(x-1).
+* |m| is a kind of norm. Sum uses it as a length of list and that is approximately l0-norm, though messages with zero results are excluded by RNG definition.
+* We should keep node list, therefore, we cannot use SimpleLocalnet stuff.
+
 # Development plan
 * Command line arguments √
   * --send-for k
