@@ -17,9 +17,6 @@ instance Binary Payload where
   put (Payload msg) = put msg
   get = Payload <$> get
 
--- the object sending across the network should implement Serializable
-instance Serializable Payload
-
 --
 data ResultState = ResultState Integer Double deriving (Show, Eq)
 

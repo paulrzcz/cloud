@@ -11,50 +11,28 @@ import           Control.Applicative
 import           Control.Distributed.Process
 import           Control.Distributed.Process.Extras.Time  (TimeUnit (..),
                                                            within)
-import           Control.Distributed.Process.Extras.Timer (killAfter)
+import           Control.Distributed.Process.Extras.Timer (exitAfter)
 import           Control.Distributed.Process.Serializable
 import           Control.Monad
-import           Data.Binary                              (Binary (..), Get)
 import           System.Random.Mersenne.Pure64
 
 import           Random
-
-data CalculationPayload a = Task a
-  | FinishCalculation
-  deriving (Show, Eq, Typeable, Data)
-
-instance Binary a => Binary (CalculationPayload a) where
-  put FinishCalculation = put (0 :: Int32)
-  put (Task a) = do
-    put (1 :: Int32)
-    put a
-  get = do
-    s <- get :: Get Int32
-    case s of
-      0 -> return FinishCalculation
-      1 -> Task <$> get
-      _ -> fail "Incorrect type of CalculationPayload!"
-
--- instance Serializable a => Serializable (CalculationPayload a)
 
 senderProcess :: Int -> PureMT -> [ProcessId] -> Process ()
 senderProcess timeToLive rng allProcesses = do
     pid <- getSelfPid
     register "sender" pid
-    killAfter (within timeToLive Seconds) pid "Time to kill sending process"
+    exitAfter (within timeToLive Seconds) pid "Time to kill sending process"
     go rng
     return ()
   where
     go :: PureMT -> Process ()
-    go rng' = foldM sendToPid rng' allProcesses >>= go
+    go rng' = do
+      _ <- receiveTimeout 0 []
+      foldM sendToPid rng' allProcesses >>= go
 
     sendToPid :: PureMT -> ProcessId -> Process PureMT
     sendToPid r pid = do
       let (m, r') = getRandomMessage r
-      send pid (Task m)
+      send pid m
       return r'
-
-
-
-  -- let (m, rng') = getRandomMessage rng
-  -- forM_ allProcesses $ \pid -> send pid (Task m)
