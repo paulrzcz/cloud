@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
+import           CalcProcess
 import           CmdArgs
 import           SenderProcess
 
@@ -14,6 +15,7 @@ import           Control.Monad.Logger                     (logDebugN,
                                                            runStderrLoggingT)
 import           Control.Monad.Trans.Class
 
+import           Data.List                                (delete)
 import           Data.Text                                (Text, pack)
 import           Data.Typeable
 
@@ -35,19 +37,35 @@ main = runStderrLoggingT $ do
     Right transport -> lift $ N.newLocalNode transport N.initRemoteTable
   logDebugN "Node is initialized"
 
-  _ <- lift $ N.runProcess node $ do
-    self <- getSelfPid
-    send self ( "hello" :: String)
-    hello <- expect :: Process String
-    say hello
-    liftIO $ threadDelay 1000
+
+  lift $ N.runProcess node $ do
+    -- spin off sending process that should be active no more than send-for time
+    let rng = pureMT (seedNum args)
+    senderPid <- spawnLocal $ senderProcess (sendTime args) rng []
+    senderRef <- monitor senderPid
+      -- spin off receiving process that should calculate the tuple
+    calcPid <- spawnLocal $ calcProcess (sendTime args + waitTime args)
+    calcRef <- monitor calcPid
+
+    waitAllToDie [senderRef, calcRef]
     return ()
 
-  -- spin off sending process that should be active no more than send-for time
-  let rng = pureMT (seedNum args)
-  _<- lift $ N.runProcess node $ senderProcess (sendTime args) rng []
-
-  -- spin off receiving process that should calculate the tuple
 
   logDebugN "Quit!"
+  lift $ threadDelay 1000 -- let us get 1 sec for all processes to say something
   return ()
+
+--
+
+waitAllToDie :: [MonitorRef] -> Process ()
+waitAllToDie [] = return ()
+waitAllToDie xs = do
+  say $ concat ["There were ", show $ length xs, " in the bed"]
+  newXs <- receiveWait [
+      matchIf (\(ProcessMonitorNotification ref _ _) -> elem ref xs)
+        (\(ProcessMonitorNotification ref _ _) -> do
+            say "one fell out"
+            say ("Process has died : " ++ show ref)
+            return $ delete ref xs)
+    ]
+  waitAllToDie newXs
