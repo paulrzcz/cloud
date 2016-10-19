@@ -7,13 +7,14 @@ module CmdArgs
 
 import           Data.Data
 import           Data.Typeable
+import           Data.Word
 import           Network.Socket         (HostName, ServiceName)
 import           System.Console.CmdArgs
 
 data Config = Config {
   sendTime :: Int,
   waitTime :: Int,
-  seedNum  :: Int,
+  seedNum  :: Word64,
   hostName :: HostName,
   portNum  :: ServiceName
 } deriving (Show, Data, Typeable)

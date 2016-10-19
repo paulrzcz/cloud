@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 module SenderProcess
-    (
+    ( senderProcess
     ) where
 
 import           Data.Data
@@ -36,5 +36,21 @@ instance Binary a => Binary (CalculationPayload a) where
 
 senderProcess :: PureMT -> [ProcessId] -> Process ()
 senderProcess rng allProcesses = do
-  let (m, rng') = getRandomMessage rng
-  forM_ allProcesses $ \pid -> send pid (Task m)
+    pid <- getSelfPid
+    register "sender" pid
+    go rng
+    return ()
+  where
+    go :: PureMT -> Process ()
+    go rng' = foldM sendToPid rng' allProcesses >>= go
+
+    sendToPid :: PureMT -> ProcessId -> Process PureMT
+    sendToPid r pid = do
+      let (m, r') = getRandomMessage r
+      send pid (Task m)
+      return r'
+
+
+
+  -- let (m, rng') = getRandomMessage rng
+  -- forM_ allProcesses $ \pid -> send pid (Task m)

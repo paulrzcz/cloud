@@ -2,6 +2,11 @@
 
 This is the test of distributed-process library on "real-life" task
 
+# Network topology configuration
+
+Due to test nature of this solution, the simple node list is kept in the app/src/NodeList.hs.
+_Please modify it before run!_
+
 # Catches and non-clarities
 * Each message contains a deterministic random number n ∈ (0, 1].
   * There is no distribution of random number. In order to optimize the goal (higher value is better), the distribution could be \delta(x-1).
@@ -28,7 +33,7 @@ This is the test of distributed-process library on "real-life" task
     * every message reach every node
 * Debug configuration
   * To stderr only
-  * monad-logger (fast-logger?)
+  * monad-logger (fast-logger?) Nope! there is say :: String -> Process ()
 * Testing
   * The larger your score is, the better.
   * Properties to test: message processing.

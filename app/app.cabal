@@ -33,7 +33,9 @@ library
                        binary,
                        mersenne-random-pure64,
                        distributed-process-simplelocalnet,
-                       network
+                       network,
+                       network-transport,
+                       bytestring
 
 executable app
   hs-source-dirs:      app
@@ -45,6 +47,7 @@ executable app
                        distributed-process-simplelocalnet,
                        monad-logger,
                        text,
+                       mersenne-random-pure64,
                        transformers
 
 test-suite simple-test
