@@ -9,6 +9,9 @@ import           Data.Typeable
 
 import           Control.Applicative
 import           Control.Distributed.Process
+import           Control.Distributed.Process.Extras.Time  (TimeUnit (..),
+                                                           within)
+import           Control.Distributed.Process.Extras.Timer (killAfter)
 import           Control.Distributed.Process.Serializable
 import           Control.Monad
 import           Data.Binary                              (Binary (..), Get)
@@ -34,10 +37,11 @@ instance Binary a => Binary (CalculationPayload a) where
 
 -- instance Serializable a => Serializable (CalculationPayload a)
 
-senderProcess :: PureMT -> [ProcessId] -> Process ()
-senderProcess rng allProcesses = do
+senderProcess :: Int -> PureMT -> [ProcessId] -> Process ()
+senderProcess timeToLive rng allProcesses = do
     pid <- getSelfPid
     register "sender" pid
+    killAfter (within timeToLive Seconds) pid "Time to kill sending process"
     go rng
     return ()
   where

@@ -29,10 +29,10 @@ library
                        monad-logger,
                        text,
                        distributed-process,
+                       distributed-process-extras,
                        cmdargs,
                        binary,
                        mersenne-random-pure64,
-                       distributed-process-simplelocalnet,
                        network,
                        network-transport,
                        bytestring
@@ -44,10 +44,10 @@ executable app
   build-depends:       base >= 4.7 && < 5,
                        app,
                        distributed-process,
-                       distributed-process-simplelocalnet,
                        monad-logger,
                        text,
                        mersenne-random-pure64,
+                       network-transport-tcp,
                        transformers
 
 test-suite simple-test

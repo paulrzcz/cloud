@@ -3,13 +3,10 @@ module NodeList
     ( activeNodes
     ) where
 
-import           Control.Distributed.Process                        (NodeId (..),
-                                                                     ProcessId)
-import           Control.Distributed.Process.Backend.SimpleLocalnet (Backend)
-import qualified Data.ByteString.Char8                              as BS
-import           Network.Socket                                     (HostName,
-                                                                     ServiceName)
-import           Network.Transport                                  (EndPointAddress (..))
+import           Control.Distributed.Process (NodeId (..), ProcessId)
+import qualified Data.ByteString.Char8       as BS
+import           Network.Socket              (HostName, ServiceName)
+import           Network.Transport           (EndPointAddress (..))
 
 -- we will keep here the node list
 

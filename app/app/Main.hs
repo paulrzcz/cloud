@@ -5,16 +5,19 @@ import           CmdArgs
 import           SenderProcess
 
 import           Control.Distributed.Process
-import           Control.Distributed.Process.Backend.SimpleLocalnet
-import qualified Control.Distributed.Process.Node                   as N
+import qualified Control.Distributed.Process.Node         as N
 import           Control.Distributed.Process.Serializable
 
-import           Control.Concurrent                                 (threadDelay)
-import           Control.Monad.Logger
+import           Control.Concurrent                       (threadDelay)
+import           Control.Exception                        (throw)
+import           Control.Monad.Logger                     (logDebugN,
+                                                           runStderrLoggingT)
 import           Control.Monad.Trans.Class
 
-import           Data.Text                                          (Text, pack)
+import           Data.Text                                (Text, pack)
 import           Data.Typeable
+
+import qualified Network.Transport.TCP                    as NT
 
 import           System.Random.Mersenne.Pure64
 
@@ -25,10 +28,12 @@ main = runStderrLoggingT $ do
   logDebugN $ pack $ show args
 
   -- init backend
-  logDebugN "Initializing backend..."
-  backend <- lift $ initializeBackend (hostName args) (portNum args) N.initRemoteTable
-  logDebugN "SimpleLocalnet backend is initialized"
-  node <- lift $ newLocalNode backend
+  logDebugN "Initializing transport..."
+  eitherTransport <- lift $ NT.createTransport (hostName args) (portNum args) NT.defaultTCPParameters
+  node <- case eitherTransport of
+    Left err -> throw err
+    Right transport -> lift $ N.newLocalNode transport N.initRemoteTable
+  logDebugN "Node is initialized"
 
   _ <- lift $ N.runProcess node $ do
     self <- getSelfPid
@@ -40,7 +45,7 @@ main = runStderrLoggingT $ do
 
   -- spin off sending process that should be active no more than send-for time
   let rng = pureMT (seedNum args)
-  _<- lift $ N.runProcess node $ senderProcess rng []
+  _<- lift $ N.runProcess node $ senderProcess (sendTime args) rng []
 
   -- spin off receiving process that should calculate the tuple
 
