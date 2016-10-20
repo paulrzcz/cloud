@@ -16,4 +16,9 @@ calcProcess timeout = do
     exitAfter (within timeout Seconds) pid "It is time to die"
     go
   where
-    go = undefined
+    go = do
+      msg <- receiveWait [
+          match (\(Payload x) -> return x)
+        ]
+      say $ show msg
+      go

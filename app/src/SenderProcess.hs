@@ -18,7 +18,7 @@ import           System.Random.Mersenne.Pure64
 
 import           Random
 
-senderProcess :: Int -> PureMT -> [ProcessId] -> Process ()
+senderProcess :: Int -> PureMT -> [NodeId] -> Process ()
 senderProcess timeToLive rng allProcesses = do
     pid <- getSelfPid
     register "sender" pid
@@ -28,11 +28,11 @@ senderProcess timeToLive rng allProcesses = do
   where
     go :: PureMT -> Process ()
     go rng' = do
-      _ <- receiveTimeout 0 []
+      _ <- receiveTimeout 0 [] -- for catching exit signal
       foldM sendToPid rng' allProcesses >>= go
 
-    sendToPid :: PureMT -> ProcessId -> Process PureMT
-    sendToPid r pid = do
+    sendToPid :: PureMT -> NodeId -> Process PureMT
+    sendToPid r node = do
       let (m, r') = getRandomMessage r
-      send pid m
+      nsend "calc" m
       return r'
