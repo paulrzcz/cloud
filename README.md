@@ -43,3 +43,4 @@ _Please modify it before run!_
   * Properties to test: message processing.
   * Failure tests
 * Other considerations
+  * Given that RNG is uniformly distributed and result is (N, S) than E[S] = (N+1) * N / 4
