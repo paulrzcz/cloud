@@ -36,7 +36,9 @@ library
                        mersenne-random-pure64,
                        network,
                        network-transport,
-                       bytestring
+                       bytestring,
+                       syb,
+                       deepseq
 
 executable app
   hs-source-dirs:      app

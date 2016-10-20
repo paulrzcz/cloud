@@ -7,18 +7,32 @@ import           Message
 import           Control.Distributed.Process
 import           Control.Distributed.Process.Extras.Time  (TimeUnit (..),
                                                            within)
-import           Control.Distributed.Process.Extras.Timer (exitAfter)
+import           Control.Distributed.Process.Extras.Timer (exitAfter, sendAfter)
 
-calcProcess :: Int -> Process ()
-calcProcess timeout = do
+calcProcess :: Int -> Int -> ResultState -> Process ()
+calcProcess killTimeout sendTimeout state = do
     pid <- getSelfPid
     register "calc" pid
-    exitAfter (within timeout Seconds) pid "It is time to die"
-    go
+    exitAfter (within killTimeout Seconds) pid "It is time to die"
+    sendAfter (within sendTimeout Seconds) pid SwitchToFinalization
+    go state
   where
-    go = do
+    go st = do
       msg <- receiveWait [
-          match (\(Payload x) -> return x)
+          match (\x@(Payload _) -> return $ Just x),
+          match (\SwitchToFinalization -> return Nothing)
         ]
-      say $ show msg
-      go
+      case msg of
+        Nothing -> goFinal st
+        Just m -> do
+                    let newState = updateResult st m
+                    go newState
+    goFinal st = do
+      msg <- receiveTimeout 10 [
+          match (\x@(Payload _) -> return x)
+        ]
+      case msg of
+        Nothing -> say $ show st
+        Just m -> do
+                    let newState = updateResult st m
+                    goFinal newState

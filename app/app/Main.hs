@@ -3,6 +3,7 @@ module Main where
 
 import           CalcProcess
 import           CmdArgs
+import           Message                                  (initialState)
 import           NodeList
 import           SenderProcess
 
@@ -42,10 +43,13 @@ main = runStderrLoggingT $ do
   lift $ N.runProcess node $ do
     -- spin off sending process that should be active no more than send-for time
     let rng = pureMT (seedNum args)
-    senderPid <- spawnLocal $ senderProcess (sendTime args) rng activeNodes
+    let sendTimeout = sendTime args
+    let killTimeout = sendTimeout + waitTime args
+
+    senderPid <- spawnLocal $ senderProcess sendTimeout rng activeNodes
     senderRef <- monitor senderPid
       -- spin off receiving process that should calculate the tuple
-    calcPid <- spawnLocal $ calcProcess (sendTime args + waitTime args)
+    calcPid <- spawnLocal $ calcProcess killTimeout sendTimeout initialState
     calcRef <- monitor calcPid
 
     waitAllToDie [senderRef, calcRef]
