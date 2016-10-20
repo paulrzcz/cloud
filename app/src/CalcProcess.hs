@@ -13,8 +13,8 @@ calcProcess :: Int -> Int -> ResultState -> Process ()
 calcProcess killTimeout sendTimeout state = do
     pid <- getSelfPid
     register "calc" pid
-    exitAfter (within killTimeout Seconds) pid "It is time to die"
-    sendAfter (within sendTimeout Seconds) pid SwitchToFinalization
+    exitAfter (within killTimeout Seconds) pid "It is time to die" -- do harakiri
+    sendAfter (within sendTimeout Seconds) pid SwitchToFinalization -- senders should end at this moment
     go state
   where
     go st = do

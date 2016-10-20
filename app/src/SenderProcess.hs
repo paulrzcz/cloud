@@ -34,5 +34,5 @@ senderProcess timeToLive rng allProcesses = do
     sendToPid :: PureMT -> NodeId -> Process PureMT
     sendToPid r node = do
       let (m, r') = getRandomMessage r
-      nsend "calc" m
+      nsendRemote node "calc" m
       return r'

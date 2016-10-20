@@ -17,4 +17,4 @@ mkNodeId :: (HostName, ServiceName) -> NodeId
 mkNodeId (host, srv) = NodeId . EndPointAddress . BS.concat $ [BS.pack host, ":", BS.pack srv, ":0"]
 
 nodes :: [(HostName, ServiceName)]
-nodes = [("127.0.0.1", "4001")]
+nodes = [("10.0.1.12", "4001"), ("10.0.1.12", "4002")]
