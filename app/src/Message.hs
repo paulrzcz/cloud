@@ -16,7 +16,7 @@ import           Data.Typeable
 import           GHC.Generics
 
 
-data Payload = Payload Double deriving (Show, Typeable, Data, Generic)
+newtype Payload = Payload Double deriving (Show, Typeable, Data, Generic)
 instance Binary Payload
 
 data SwitchToFinalization = SwitchToFinalization deriving (Show, Typeable, Data, Generic)

@@ -23,9 +23,9 @@ cloudArgs = Config {
   sendTime = 5 &= help "Time to send messages" &= explicit &= name "send-for" &= opt (5 :: Int),
   waitTime = 10 &= help "Time to wait for messages" &= explicit &= name "wait-for" &= opt (10 :: Int),
   seedNum  = 1 &= help "RNG seed" &= explicit &= name "with-seed" &= opt (1 :: Int),
-  hostName = "localhost" &= help "Node host name" &= opt "localhost",
-  portNum = "4001" &= help "Node port number" &= opt "4001"
-} &= summary "Cloud test v 0.1.0.0"
+  hostName = def &= help "Node host name" &= explicit &= name "host",
+  portNum = def &= help "Node port number" &= explicit &= name "port"
+} &= summary "CloudHaskell test v 0.1.0.0"
   &= program "app"
 
 getCloudArgs = cmdArgs cloudArgs
