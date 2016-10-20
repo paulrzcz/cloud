@@ -20,8 +20,8 @@ data Config = Config {
 } deriving (Show, Data, Typeable)
 
 cloudArgs = Config {
-  sendTime = 5 &= help "Time to send messages" &= explicit &= name "send-time" &= opt (5 :: Int),
-  waitTime = 10 &= help "Time to wait for messages" &= explicit &= name "wait-time" &= opt (10 :: Int),
+  sendTime = 5 &= help "Time to send messages" &= explicit &= name "send-for" &= opt (5 :: Int),
+  waitTime = 10 &= help "Time to wait for messages" &= explicit &= name "wait-for" &= opt (10 :: Int),
   seedNum  = 1 &= help "RNG seed" &= explicit &= name "with-seed" &= opt (1 :: Int),
   hostName = "localhost" &= help "Node host name" &= opt "localhost",
   portNum = "4001" &= help "Node port number" &= opt "4001"
