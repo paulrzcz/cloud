@@ -12,13 +12,17 @@ _Please modify it before run!_
   * There is no distribution of random number. In order to optimize the goal (higher value is better), the distribution could be \delta(x-1).
 * |m| is a kind of norm. Sum uses it as a length of list and that is approximately l0-norm, though messages with zero results are excluded by RNG definition.
 * We should keep node list, therefore, we cannot use SimpleLocalnet stuff.
+* By specification, the calculation process should stop waiting after the sender process finished. How to coordinate them if they did not start at the same moment. There are two ways to solve it:
+  * Stop cycle after send-for time, read all messages in the mailbox and after that print out the value.
+  * Try to coordinate all senders by message passing (like register sender, unregister sender) and stop cycle after all senders are unregistered. Though the spec defines wait-for time when the process should be killed. This approach is too complicated and requires clarifications on the spec.
 
 # Development plan
 * Command line arguments √
   * --send-for k
   * --wait-for l
   * --with-seed s
-  * some parameters for distributed-process startup `[(host, port)]`
+  * ~~--some parameters for distributed-process startup `[(host, port)]`~~
+  * Node list is embedded into NodeList.hs
 * Random number generators
   * System
   * Mersienne-Twister √
