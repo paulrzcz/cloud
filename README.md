@@ -18,6 +18,7 @@ To run program please specify host and port to bind:
 * By specification, the calculation process should stop waiting after the sender process finished. How to coordinate them if they did not start at the same moment. There are two ways to solve it:
   * Stop cycling after send-for time, read all messages in the mailbox and after that print out the value. (chosen solution)
   * Try to coordinate all senders by message passing (like register sender, unregister sender) and stop cycle after all senders are unregistered. Though the spec defines wait-for time when the process should be killed. This approach is too complicated and requires clarifications on the spec.
+* There are two possible options of transport at home: tcp or udp. There is a library for TCP with reasonable defaults. I was not able to find UDP library to get rid off tcp delivery confirmations but as "nsend" spec says that the function never fails.
 
 # Development plan
 * Command line arguments √
